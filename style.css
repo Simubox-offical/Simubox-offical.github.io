@@ -3,7 +3,7 @@
    ========================================================================== */
 @font-face {
   font-family: 'IBM Custom';
-  src: url('fonts/ibm.ttf') format('truetype');
+  src: url('fonts/Flexi_IBM_VGA_True.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -136,5 +136,89 @@ body {
 @media (max-width: 480px) {
   .title {
     font-size: 1.8rem;
+  }
+}
+
+/* ==========================================================================
+   Info Page
+   ========================================================================== */
+.info-page {
+  max-width: 760px;
+  text-align: left;
+}
+
+.info-page .header {
+  text-align: center;
+}
+
+.info-section {
+  background-color: var(--card-bg);
+  border: 2px solid var(--accent-dark-red);
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-bottom: 18px;
+}
+
+.info-section h2 {
+  color: var(--accent-red);
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.info-section p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.info-section strong {
+  color: var(--text-primary);
+  font-weight: normal;
+}
+
+.info-list {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+}
+
+.info-list li {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  padding-left: 22px;
+  position: relative;
+}
+
+.info-list li::before {
+  color: var(--accent-red);
+  content: ">";
+  left: 0;
+  position: absolute;
+}
+
+.info-link,
+.back-link {
+  color: var(--accent-red);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.info-link:hover,
+.back-link:hover {
+  color: var(--text-primary);
+}
+
+.back-link {
+  display: inline-block;
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+@media (max-width: 480px) {
+  .info-section {
+    padding: 20px;
   }
 }
