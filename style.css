@@ -1,1 +1,140 @@
+/* ==========================================================================
+   Custom Font Setup
+   ========================================================================== */
+@font-face {
+  font-family: 'IBM Custom';
+  src: url('fonts/ibm.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
+/* ==========================================================================
+   CSS Variables (Red & Black Dark Theme)
+   ========================================================================== */
+:root {
+  --bg-color: #0a0505;          /* Very dark charcoal/black base */
+  --card-bg: #140808;           /* Slightly lighter dark background for cards */
+  --text-primary: #f5e6e6;      /* Off-white with a slight red tint */
+  --text-secondary: #a37a7a;    /* Muted reddish-gray text */
+  --accent-red: #e61919;        /* Primary vibrant red */
+  --accent-dark-red: #800a0a;   /* Deep red for borders/shadows */
+  --glow-color: rgba(230, 25, 25, 0.4);
+  
+  --font-family: 'IBM Custom', monospace, sans-serif;
+}
+
+/* ==========================================================================
+   Reset & Base Styles
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* ==========================================================================
+   Layout Containers
+   ========================================================================== */
+.container {
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+}
+
+.header {
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: var(--accent-red);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--glow-color);
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* ==========================================================================
+   Navigation Grid & Cards
+   ========================================================================== */
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border: 2px solid var(--accent-dark-red);
+  border-radius: 8px;
+  padding: 25px;
+  text-decoration: none;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-content {
+  text-align: left;
+}
+
+.card h2 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 5px;
+  transition: color 0.3s ease;
+}
+
+.card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.card-arrow {
+  font-size: 1.5rem;
+  color: var(--accent-red);
+  transition: transform 0.3s ease;
+}
+
+/* Hover & Focus Effects */
+.card:hover {
+  border-color: var(--accent-red);
+  transform: translateY(-4px);
+  box-shadow: 0 5px 20px var(--glow-color);
+  background-color: #1c0a0a;
+}
+
+.card:hover h2 {
+  color: var(--accent-red);
+}
+
+.card:hover .card-arrow {
+  transform: translateX(5px);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.8rem;
+  }
+}
