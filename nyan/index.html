@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Full Page Embedded Site</title>
+  <style>
+    /* Remove default spacing around the webpage edge */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; /* Prevents double scrollbars */
+    }
+
+    /* Force the iframe to fill the entire screen stretch */
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none; /* Removes the default box border */
+      display: block; /* Eliminates small bottom spacing gaps */
+    }
+  </style>
+</head>
+<body>
+
+  <iframe 
+    src="https://nyan.cat" 
+    title="Full Screen Display Container">
+  </iframe>
+
+</body>
+</html>
