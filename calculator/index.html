@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>TI-84 Plus CE</title>
+    <style>
+        :root {
+            --calc-case: #1e2025;
+            --calc-bezel: #121316;
+            --screen-frame: #0a0b0d;
+            --btn-dark: #23252b;
+            --btn-num: #32353e;
+            --btn-2nd: #2563eb;
+            --btn-alpha: #15803d;
+            --btn-enter: #059669;
+            --label-2nd: #60a5fa;
+            --label-alpha: #4ade80;
+            --label-main: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #1e293b, #090d16);
+            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 16px 8px 30px;
+            min-height: 100vh;
+        }
+
+        /* Handheld Calculator Case */
+        .ti-body {
+            background: var(--calc-case);
+            border-radius: 28px 28px 45px 45px;
+            padding: 18px 18px 26px;
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.85),
+                0 4px 10px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15),
+                inset 0 -3px 8px rgba(0, 0, 0, 0.6);
+            border: 2px solid #2e323b;
+            width: 380px;
+            max-width: 96vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Branding header */
+        .ti-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 6px 10px;
+        }
+
+        .ti-logo {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            color: #94a3b8;
+        }
+
+        .ti-model {
+            font-size: 11px;
+            font-weight: 700;
+            color: #38bdf8;
+            letter-spacing: 0.5px;
+        }
+
+        /* Screen Window */
+        .screen-bezel {
+            background: var(--screen-frame);
+            padding: 6px;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid #1c1d22;
+            margin-bottom: 6px;
+        }
+
+        canvas {
+            display: block;
+            image-rendering: pixelated;
+            width: 320px;
+            height: 240px;
+            border-radius: 4px;
+            background: #000;
+        }
+
+        .status-pill {
+            font-size: 11px;
+            font-weight: 600;
+            color: #22c55e;
+            height: 16px;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Keypad Area */
+        .keypad-matrix {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .k-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+        }
+
+        /* Key Unit (Sub-label + Button) */
+        .key-unit {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .sub-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            font-size: 8px;
+            font-weight: 800;
+            height: 10px;
+            line-height: 10px;
+            margin-bottom: 1px;
+        }
+
+        .lbl-2nd { color: var(--label-2nd); }
+        .lbl-alpha { color: var(--label-alpha); }
+
+        /* Button Styling */
+        .k-btn {
+            width: 100%;
+            height: 30px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--btn-dark);
+            color: var(--label-main);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-shadow: 
+                0 3px 0 #121316,
+                0 4px 6px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transition: transform 0.04s ease, box-shadow 0.04s ease;
+        }
+
+        .k-btn:active, .k-btn.active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #121316, inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            filter: brightness(1.15);
+        }
+
+        /* Key Varieties */
+        .k-func {
+            height: 22px;
+            border-radius: 12px;
+            background: #1c1d22;
+            font-size: 10px;
+        }
+
+        .k-num {
+            background: var(--btn-num);
+            font-size: 14px;
+            height: 32px;
+        }
+
+        .k-2nd { background: var(--btn-2nd); color: #fff; }
+        .k-alpha { background: var(--btn-alpha); color: #fff; }
+        .k-enter { background: var(--btn-enter); height: 32px; color: #fff; }
+
+        /* Upper Nav Zone with D-Pad */
+        .nav-cluster {
+            display: flex;
+            width: 100%;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+
+        .nav-left-keys {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Circular D-PAD */
+        .dpad-container {
+            flex: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dpad {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            background: #18191e;
+            border-radius: 50%;
+            box-shadow: 
+                0 4px 10px rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.8);
+            border: 2px solid #282a32;
+        }
+
+        .dpad-btn {
+            position: absolute;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .dpad-btn:active { color: #38bdf8; }
+
+        .dpad-up { top: 2px; left: 32px; width: 26px; height: 26px; }
+        .dpad-down { bottom: 2px; left: 32px; width: 26px; height: 26px; }
+        .dpad-left { top: 32px; left: 2px; width: 26px; height: 26px; }
+        .dpad-right { top: 32px; right: 2px; width: 26px; height: 26px; }
+
+        .dpad-center {
+            position: absolute;
+            top: 29px;
+            left: 29px;
+            width: 32px;
+            height: 32px;
+            background: #23252d;
+            border-radius: 50%;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+        }
+
+        /* Bottom Toolbar */
+        .footer-tools {
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="file"] { display: none; }
+
+        .tool-link {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .tool-link:hover { background: #334155; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="ti-body">
+        <div class="ti-header">
+            <span class="ti-logo">TEXAS INSTRUMENTS</span>
+            <span class="ti-model">TI-84 Plus CE</span>
+        </div>
+
+        <div class="screen-bezel">
+            <canvas id="screen" width="320" height="240"></canvas>
+        </div>
+
+        <div id="status" class="status-pill">Checking storage...</div>
+
+        <div class="keypad-matrix">
+            <!-- Row 1: Top Soft Keys -->
+            <div class="k-row">
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f1</span></div><button class="k-btn k-func" data-k="1,4">Y=</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f2</span></div><button class="k-btn k-func" data-k="1,3">WINDOW</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f3</span></div><button class="k-btn k-func" data-k="1,2">ZOOM</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f4</span></div><button class="k-btn k-func" data-k="1,1">TRACE</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f5</span></div><button class="k-btn k-func" data-k="1,0">GRAPH</button></div>
+            </div>
+
+            <!-- Nav Zone: 2nd, Mode, Del, Alpha + Circular D-PAD -->
+            <div class="nav-cluster">
+                <div class="nav-left-keys">
+                    <div class="k-row">
+                        <div class="key-unit"><div class="sub-labels"></div><button class="k-btn k-2nd" data-k="1,5">2nd</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">QUIT</span></div><button class="k-btn" data-k="1,6">MODE</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">INS</span></div><button class="k-btn" data-k="1,7">DEL</button></div>
+                    </div>
+                    <div class="k-row">
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">A-LOCK</span></div><button class="k-btn k-alpha" data-k="2,6">ALPHA</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">TEST</span><span class="lbl-alpha">A</span></div><button class="k-btn" data-k="2,5">MATH</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">ANGLE</span><span class="lbl-alpha">B</span></div><button class="k-btn" data-k="3,6">APPS</button></div>
+                    </div>
+                </div>
+
+                <!-- Circular D-Pad -->
+                <div class="dpad-container">
+                    <div class="dpad">
+                        <button class="dpad-btn dpad-up" data-k="7,3">▲</button>
+                        <button class="dpad-btn dpad-down" data-k="7,0">▼</button>
+                        <button class="dpad-btn dpad-left" data-k="7,1">◄</button>
+                        <button class="dpad-btn dpad-right" data-k="7,2">►</button>
+                        <div class="dpad-center"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: X,T,θ,n, STAT -->
+            <div class="k-row">
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">LINK</span></div><button class="k-btn" data-k="3,7">X,T,θ,n</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">DRAW</span><span class="lbl-alpha">C</span></div><button class="k-btn" data-k="4,6">PRGM</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">DISTR</span></div><button class="k-btn" data-k="5,6">VARS</button></div>
+                <div class="key-unit"><div class="sub-labels"></div><button class="k-btn" data-k="6,6">CLEAR</button></div>
+            </div>
+
+            <!-- Row 4: Math functions -->
+            <div class="k-row">
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">MATRIX</span><span class="lbl-alpha">D</span></div><button class="k-btn" data-k="2,4">x⁻¹</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">SIN⁻¹</span><span class="lbl-alpha">E</span></div><button class="k-btn" data-k="3,5">SIN</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">COS⁻¹</span><span class="lbl-alpha">F</span></div><button class="k-btn" data-k="4,5">COS</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">TAN⁻¹</span><span class="lbl-alpha">G</span></div><button class="k-btn" data-k="5,5">TAN</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">π</span><span class="lbl-alpha">H</span></div><button class="k-btn" data-k="6,5">^</button></div>
+            </div>
+
+            <!-- Row 5: 7 8 9 ÷ -->
+            <div class="k-row">
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">√</span><span class="lbl-alpha">I</span></div><button class="k-btn" data-k="2,3">x²</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">u</span><span class="lbl-alpha">O</span></div><button class="k-btn k-num" data-k="3,3">7</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">v</span><span class="lbl-alpha">P</span></div><button class="k-btn k-num" data-k="4,3">8</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">w</span><span class="lbl-alpha">Q</span></div><button class="k-btn k-num" data-k="5,3">9</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">e</span></div><button class="k-btn" data-k="6,4">÷</button></div>
+            </div>
+
+            <!-- Row 6: 4 5 6 × -->
+            <div class="k-row">
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">EE</span><span class="lbl-alpha">J</span></div><button class="k-btn" data-k="3,4">,</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L4</span><span class="lbl-alpha">T</span></div><button class="k-btn k-num" data-k="3,2">4</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L5</span><span class="lbl-alpha">U</span></div><button class="k-btn k-num" data-k="4,2">5</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L6</span><span class="lbl-alpha">V</span></div><button class="k-btn k-num" data-k="5,2">6</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">[</span></div><button class="k-btn" data-k="6,3">×</button></div>
+            </div>
+
+            <!-- Row 7: 1 2 3 − -->
+            <div class="k-row">
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">{</span><span class="lbl-alpha">K</span></div><button class="k-btn" data-k="4,4">(</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L1</span><span class="lbl-alpha">Y</span></div><button class="k-btn k-num" data-k="3,1">1</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L2</span><span class="lbl-alpha">Z</span></div><button class="k-btn k-num" data-k="4,1">2</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L3</span><span class="lbl-alpha">θ</span></div><button class="k-btn k-num" data-k="5,1">3</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">]</span></div><button class="k-btn" data-k="6,2">−</button></div>
+            </div>
+
+            <!-- Row 8: 0 . (-) + -->
+            <div class="k-row">
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">}</span><span class="lbl-alpha">L</span></div><button class="k-btn" data-k="5,4">)</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">CATALOG</span></div><button class="k-btn k-num" data-k="3,0">0</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">i</span></div><button class="k-btn k-num" data-k="4,0">.</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">ANS</span><span class="lbl-alpha">?</span></div><button class="k-btn k-num" data-k="5,0">( - )</button></div>
+                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">MEM</span><span class="lbl-alpha">"</span></div><button class="k-btn" data-k="6,1">+</button></div>
+            </div>
+
+            <!-- Row 9: Enter -->
+            <div class="k-row">
+                <div class="key-unit" style="flex:4;"><div class="sub-labels"><span class="lbl-2nd">ENTRY</span></div><button class="k-btn k-enter" data-k="6,0">ENTER</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Storage & Link Port Tools -->
+    <div class="footer-tools">
+        <label class="tool-link" for="file-upload">Send Program (.8xp)</label>
+        <input type="file" id="file-upload" accept=".8xp,.8xv,.8xg,.8ca,.8cg">
+
+        <label class="tool-link" for="rom-upload">Re-upload ROM</label>
+        <input type="file" id="rom-upload" accept=".rom,.bin">
+
+        <button class="tool-link" id="clear-storage" style="color:#f87171;">Clear ROM Cache</button>
+    </div>
+
+    <script>
+        // IndexedDB ROM Storage
+        const DB_NAME = "CEmuWebDB";
+        const STORE_NAME = "ROMStore";
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, 1);
+                req.onupgradeneeded = (e) => e.target.result.createObjectStore(STORE_NAME);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function saveRomToDB(data) {
+            const db = await openDB();
+            const tx = db.transaction(STORE_NAME, "readwrite");
+            tx.objectStore(STORE_NAME).put(data, "CE.rom");
+            return tx.complete;
+        }
+
+        async function loadRomFromDB() {
+            const db = await openDB();
+            return new Promise((resolve) => {
+                const tx = db.transaction(STORE_NAME, "readonly");
+                const req = tx.objectStore(STORE_NAME).get("CE.rom");
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => resolve(null);
+            });
+        }
+
+        async function clearSavedROM() {
+            const db = await openDB();
+            const tx = db.transaction(STORE_NAME, "readwrite");
+            tx.objectStore(STORE_NAME).delete("CE.rom");
+            location.reload();
+        }
+
+        // CEmu Native Callbacks
+        var emul_is_inited = false;
+        var emul_is_paused = false;
+
+        let canvas, ctx, imgData;
+        let cemu_key, cemu_get_frame, cemu_send_file;
+
+        function initFuncs() {
+            cemu_key = Module.cwrap('emu_keypad_event', null, ['number', 'number', 'number']);
+            cemu_get_frame = Module.cwrap('lcd_get_frame', 'number', []);
+            cemu_send_file = Module.cwrap('set_file_to_send', null, ['string']);
+        }
+
+        function initLCD() {
+            canvas = document.getElementById('screen');
+            ctx = canvas.getContext('2d');
+            imgData = ctx.createImageData(320, 240);
+
+            function render() {
+                if (emul_is_inited && cemu_get_frame) {
+                    const ptr = cemu_get_frame();
+                    if (ptr) {
+                        const pixels = new Uint8ClampedArray(Module.HEAPU8.buffer, ptr, 320 * 240 * 4);
+                        imgData.data.set(pixels);
+                        ctx.putImageData(imgData, 0, 0);
+                    }
+                }
+                requestAnimationFrame(render);
+            }
+            requestAnimationFrame(render);
+        }
+
+        function enableGUI() {
+            document.getElementById('status').innerText = "Emulation Running";
+            document.getElementById('status').style.color = "#4ade80";
+        }
+
+        function disableGUI() {
+            document.getElementById('status').innerText = "Emulation Halted";
+            document.getElementById('status').style.color = "#f87171";
+        }
+
+        window.transferProgressCallback = function(done, total) {
+            const percent = Math.round((done / total) * 100);
+            document.getElementById('status').innerText = `Sending file: ${percent}%`;
+            if (done >= total) {
+                setTimeout(() => {
+                    document.getElementById('status').innerText = "File transferred!";
+                }, 1200);
+            }
+        };
+
+        window.transferErrorCallback = function() {
+            document.getElementById('status').innerText = "Transfer error.";
+            document.getElementById('status').style.color = "#f87171";
+        };
+
+        // Keypad Inputs
+        function pressKey(r, c) { if (cemu_key) cemu_key(r, c, 1); }
+        function releaseKey(r, c) { if (cemu_key) cemu_key(r, c, 0); }
+
+        function setupTouchKeypad() {
+            document.querySelectorAll('[data-k]').forEach(btn => {
+                const [r, c] = btn.getAttribute('data-k').split(',').map(Number);
+                const down = (e) => { e.preventDefault(); pressKey(r, c); btn.classList.add('active'); };
+                const up = (e) => { e.preventDefault(); releaseKey(r, c); btn.classList.remove('active'); };
+
+                btn.addEventListener('mousedown', down);
+                btn.addEventListener('mouseup', up);
+                btn.addEventListener('mouseleave', up);
+
+                btn.addEventListener('touchstart', down, { passive: false });
+                btn.addEventListener('touchend', up, { passive: false });
+                btn.addEventListener('touchcancel', up, { passive: false });
+            });
+        }
+
+        // Hardware keyboard mapping
+        const pcKeyMap = {
+            'ArrowDown':  [7, 0],
+            'ArrowLeft':  [7, 1],
+            'ArrowRight': [7, 2],
+            'ArrowUp':    [7, 3],
+            'Enter':      [6, 0],
+            '+':          [6, 1],
+            '-':          [6, 2],
+            '*':          [6, 3],
+            '/':          [6, 4],
+            '^':          [6, 5],
+            'Backspace':  [6, 6],
+            '0':          [3, 0],
+            '1':          [3, 1],
+            '2':          [4, 1],
+            '3':          [5, 1],
+            '4':          [3, 2],
+            '5':          [4, 2],
+            '6':          [5, 2],
+            '7':          [3, 3],
+            '8':          [4, 3],
+            '9':          [5, 3],
+            '.':          [4, 0],
+            '(':          [4, 4],
+            ')':          [5, 4],
+            ',':          [3, 4],
+            'Shift':      [1, 5],
+            'Escape':     [1, 6],
+            'Delete':     [1, 7]
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if (pcKeyMap[e.key]) pressKey(pcKeyMap[e.key][0], pcKeyMap[e.key][1]);
+        });
+        window.addEventListener('keyup', (e) => {
+            if (pcKeyMap[e.key]) releaseKey(pcKeyMap[e.key][0], pcKeyMap[e.key][1]);
+        });
+
+        function startEmulatorWithROM(romData) {
+            Module.FS.writeFile("CE.rom", romData);
+            document.getElementById('status').innerText = "Booting TI-OS...";
+            Module.callMain();
+        }
+
+        document.getElementById('clear-storage').addEventListener('click', clearSavedROM);
+
+        document.getElementById('file-upload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const bytes = new Uint8Array(evt.target.result);
+                const path = "/" + file.name;
+                Module.FS.writeFile(path, bytes);
+                document.getElementById('status').innerText = `Sending ${file.name}...`;
+                cemu_send_file(path);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        document.getElementById('rom-upload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(evt) {
+                const bytes = new Uint8Array(evt.target.result);
+                await saveRomToDB(bytes);
+                startEmulatorWithROM(bytes);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        var Module = {
+            noInitialRun: true,
+            onRuntimeInitialized: async function() {
+                setupTouchKeypad();
+
+                const cachedROM = await loadRomFromDB();
+                if (cachedROM) {
+                    document.getElementById('status').innerText = "Loading saved ROM...";
+                    startEmulatorWithROM(cachedROM);
+                } else {
+                    document.getElementById('status').innerText = "Ready. Please upload CE.rom";
+                }
+            }
+        };
+    </script>
+
+    <script src="cemu_web.js"></script>
+</body>
+</html>
