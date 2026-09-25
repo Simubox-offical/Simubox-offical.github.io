@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>TI-84 Plus CE</title>
+    <title>TI-84 Plus CE Studio & Gemini AI</title>
     <style>
         :root {
             --calc-case: #1e2025;
@@ -17,52 +17,146 @@
             --label-2nd: #60a5fa;
             --label-alpha: #4ade80;
             --label-main: #e2e8f0;
+            --bg-base: #0b0f17;
+            --panel-bg: #141824;
+            --panel-border: #232a3b;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.2);
+            --accent-green: #22c55e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
         * {
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation;
+        }
+
+        input, textarea, select {
+            user-select: text !important;
+            -webkit-user-select: text !important;
         }
 
         body {
-            background: radial-gradient(circle at top, #1e293b, #090d16);
-            color: #f8fafc;
+            background: radial-gradient(circle at 50% 0%, #172136, var(--bg-base) 75%);
+            color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            margin: 0;
+            padding: 12px 16px 30px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 0;
-            padding: 16px 8px 30px;
-            min-height: 100vh;
+        }
+
+        /* Top Header Bar */
+        .studio-topbar {
+            width: 100%;
+            max-width: 1260px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 14px;
+            margin-bottom: 14px;
+            background: rgba(20, 24, 36, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+        }
+
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-chip {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 7px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .studio-title {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .view-switchers {
+            display: flex;
+            gap: 6px;
+            background: #0d111a;
+            padding: 3px;
+            border-radius: 9px;
+            border: 1px solid #1e2638;
+        }
+
+        .v-tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .v-tab-btn.active {
+            background: #1e293b;
+            color: #38bdf8;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+
+        /* Workspace Grid */
+        .workspace-grid {
+            display: flex;
+            flex-direction: row;
+            gap: 22px;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 1260px;
+        }
+
+        /* Emulator Column */
+        .pane-calc {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
         }
 
         /* Handheld Calculator Case */
         .ti-body {
             background: var(--calc-case);
             border-radius: 28px 28px 45px 45px;
-            padding: 18px 18px 26px;
+            padding: 18px 18px 24px;
             box-shadow: 
                 0 25px 60px rgba(0, 0, 0, 0.85),
                 0 4px 10px rgba(0, 0, 0, 0.4),
                 inset 0 1px 1px rgba(255, 255, 255, 0.15),
                 inset 0 -3px 8px rgba(0, 0, 0, 0.6);
             border: 2px solid #2e323b;
-            width: 380px;
-            max-width: 96vw;
+            width: 375px;
+            max-width: 95vw;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* Branding header */
         .ti-header {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 6px 10px;
+            padding: 0 6px 8px;
         }
 
         .ti-logo {
@@ -79,7 +173,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Screen Window */
         .screen-bezel {
             background: var(--screen-frame);
             padding: 6px;
@@ -105,14 +198,14 @@
             height: 16px;
             margin-bottom: 8px;
             letter-spacing: 0.3px;
+            text-align: center;
         }
 
-        /* Keypad Area */
         .keypad-matrix {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
         .k-row {
@@ -121,7 +214,6 @@
             gap: 5px;
         }
 
-        /* Key Unit (Sub-label + Button) */
         .key-unit {
             flex: 1;
             display: flex;
@@ -144,10 +236,9 @@
         .lbl-2nd { color: var(--label-2nd); }
         .lbl-alpha { color: var(--label-alpha); }
 
-        /* Button Styling */
         .k-btn {
             width: 100%;
-            height: 30px;
+            height: 29px;
             border-radius: 7px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             background: var(--btn-dark);
@@ -164,6 +255,7 @@
                 0 4px 6px rgba(0, 0, 0, 0.4),
                 inset 0 1px 0 rgba(255, 255, 255, 0.15);
             transition: transform 0.04s ease, box-shadow 0.04s ease;
+            touch-action: manipulation;
         }
 
         .k-btn:active, .k-btn.active {
@@ -172,29 +264,16 @@
             filter: brightness(1.15);
         }
 
-        /* Key Varieties */
-        .k-func {
-            height: 22px;
-            border-radius: 12px;
-            background: #1c1d22;
-            font-size: 10px;
-        }
-
-        .k-num {
-            background: var(--btn-num);
-            font-size: 14px;
-            height: 32px;
-        }
-
+        .k-func { height: 21px; border-radius: 12px; background: #1c1d22; font-size: 10px; }
+        .k-num { background: var(--btn-num); font-size: 14px; height: 31px; }
         .k-2nd { background: var(--btn-2nd); color: #fff; }
         .k-alpha { background: var(--btn-alpha); color: #fff; }
-        .k-enter { background: var(--btn-enter); height: 32px; color: #fff; }
+        .k-enter { background: var(--btn-enter); height: 31px; color: #fff; }
 
-        /* Upper Nav Zone with D-Pad */
         .nav-cluster {
             display: flex;
             width: 100%;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
             margin-bottom: 2px;
         }
@@ -203,10 +282,9 @@
             flex: 3;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
-        /* Circular D-PAD */
         .dpad-container {
             flex: 2;
             display: flex;
@@ -216,8 +294,8 @@
 
         .dpad {
             position: relative;
-            width: 90px;
-            height: 90px;
+            width: 88px;
+            height: 88px;
             background: #18191e;
             border-radius: 50%;
             box-shadow: 
@@ -238,19 +316,19 @@
             align-items: center;
             justify-content: center;
             padding: 0;
+            touch-action: manipulation;
         }
 
-        .dpad-btn:active { color: #38bdf8; }
-
-        .dpad-up { top: 2px; left: 32px; width: 26px; height: 26px; }
-        .dpad-down { bottom: 2px; left: 32px; width: 26px; height: 26px; }
-        .dpad-left { top: 32px; left: 2px; width: 26px; height: 26px; }
-        .dpad-right { top: 32px; right: 2px; width: 26px; height: 26px; }
+        .dpad-btn:active, .dpad-btn.active { color: #38bdf8; }
+        .dpad-up { top: 2px; left: 31px; width: 26px; height: 26px; }
+        .dpad-down { bottom: 2px; left: 31px; width: 26px; height: 26px; }
+        .dpad-left { top: 31px; left: 2px; width: 26px; height: 26px; }
+        .dpad-right { top: 31px; right: 2px; width: 26px; height: 26px; }
 
         .dpad-center {
             position: absolute;
-            top: 29px;
-            left: 29px;
+            top: 28px;
+            left: 28px;
             width: 32px;
             height: 32px;
             background: #23252d;
@@ -259,11 +337,12 @@
             pointer-events: none;
         }
 
-        /* Bottom Toolbar */
         .footer-tools {
-            margin-top: 14px;
+            margin-top: 12px;
             display: flex;
-            gap: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
         }
 
         input[type="file"] { display: none; }
@@ -272,140 +351,803 @@
             background: #1e293b;
             color: #94a3b8;
             border: 1px solid #334155;
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 7px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.15s;
         }
         .tool-link:hover { background: #334155; color: #fff; }
+
+        /* Right Studio Pane (IDE + AI) */
+        .pane-studio {
+            flex: 1;
+            min-width: 480px;
+            max-width: 720px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+            height: 730px;
+        }
+
+        .studio-nav {
+            display: flex;
+            background: #0e121d;
+            border-bottom: 1px solid var(--panel-border);
+            padding: 6px 10px 0;
+            gap: 6px;
+        }
+
+        .nav-tab {
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: all 0.15s;
+        }
+
+        .nav-tab.active {
+            color: #fff;
+            background: var(--panel-bg);
+            border-top: 2px solid var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+            padding: 12px 14px;
+            gap: 10px;
+        }
+
+        .tab-content.active { display: flex; }
+
+        /* IDE Controls */
+        .ide-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .ide-input-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ide-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .ide-input {
+            background: #0d111a;
+            border: 1px solid #232c40;
+            color: #fff;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            width: 105px;
+        }
+
+        .ide-select {
+            background: #0d111a;
+            border: 1px solid #232c40;
+            color: var(--text-main);
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Token Snippets Row */
+        .token-shelf {
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+            padding: 4px 0 6px;
+            scrollbar-width: thin;
+        }
+
+        .token-shelf::-webkit-scrollbar { height: 4px; }
+        .token-shelf::-webkit-scrollbar-thumb { background: #26334d; border-radius: 4px; }
+
+        .token-chip {
+            background: #192132;
+            border: 1px solid #2a3754;
+            color: #93c5fd;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: monospace;
+            padding: 4px 8px;
+            border-radius: 5px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.12s;
+        }
+
+        .token-chip:hover {
+            background: #2563eb;
+            color: #fff;
+            border-color: #3b82f6;
+        }
+
+        /* Code Editor Window */
+        .editor-container {
+            display: flex;
+            flex: 1;
+            background: #0b0e17;
+            border: 1px solid #232b3f;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .editor-gutter {
+            width: 36px;
+            background: #080a11;
+            color: #475569;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            line-height: 19px;
+            text-align: right;
+            padding: 8px 6px 8px 0;
+            user-select: none;
+            border-right: 1px solid #1a2030;
+            overflow: hidden;
+        }
+
+        .code-textarea {
+            flex: 1;
+            background: transparent;
+            color: #e2e8f0;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            line-height: 19px;
+            padding: 8px 10px;
+            border: none;
+            outline: none;
+            resize: none;
+            white-space: pre;
+            overflow: auto;
+            tab-size: 2;
+        }
+
+        .code-textarea.flash-highlight {
+            animation: pulse-glow 0.8s ease;
+        }
+
+        @keyframes pulse-glow {
+            0% { background: rgba(56, 189, 248, 0.2); }
+            100% { background: transparent; }
+        }
+
+        /* IDE Action Buttons */
+        .ide-actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+        .btn-send:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+        .btn-download {
+            background: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+        }
+        .btn-download:hover { background: #334155; }
+
+        .btn-ask-ai {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+        .btn-ask-ai:hover { filter: brightness(1.1); }
+
+        /* Console Output */
+        .ide-console {
+            height: 90px;
+            background: #090c14;
+            border: 1px solid #1c2333;
+            border-radius: 7px;
+            padding: 6px 10px;
+            font-family: Consolas, monospace;
+            font-size: 11px;
+            color: #94a3b8;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .log-info { color: #38bdf8; }
+        .log-success { color: #4ade80; }
+        .log-warn { color: #fbbf24; }
+        .log-error { color: #f87171; }
+
+        /* AI Tab Styles */
+        .ai-config-panel {
+            background: #0e1320;
+            border: 1px solid #20283c;
+            border-radius: 10px;
+            padding: 9px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ai-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .ai-select {
+            background: #141b2b;
+            border: 1px solid #2d3852;
+            color: #fff;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            flex: 1;
+            min-width: 170px;
+        }
+
+        .ai-key-input {
+            flex: 2;
+            min-width: 180px;
+            background: #141b2b;
+            border: 1px solid #2d3852;
+            color: #fff;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: monospace;
+            outline: none;
+        }
+
+        .key-action-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .key-action-btn:hover { color: #fff; background: #334155; }
+
+        .key-link {
+            color: var(--accent);
+            font-size: 11px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .key-link:hover { text-decoration: underline; }
+
+        .quick-chips-row {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 2px 0 4px;
+            scrollbar-width: none;
+        }
+        .quick-chips-row::-webkit-scrollbar { display: none; }
+
+        .ai-chip {
+            background: #151b2a;
+            border: 1px solid #28334b;
+            color: #cbd5e1;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .ai-chip:hover {
+            background: #202b44;
+            color: #38bdf8;
+            border-color: #38bdf8;
+        }
+
+        /* Chat Window */
+        .chat-stream {
+            flex: 1;
+            background: #0a0d16;
+            border: 1px solid #1c2438;
+            border-radius: 10px;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .msg-bubble {
+            display: flex;
+            flex-direction: column;
+            max-width: 90%;
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-size: 12px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .msg-user {
+            align-self: flex-end;
+            background: #1d4ed8;
+            color: #fff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg-ai {
+            align-self: flex-start;
+            background: #141a27;
+            border: 1px solid #242e47;
+            color: #e2e8f0;
+            border-bottom-left-radius: 2px;
+            width: 100%;
+            max-width: 96%;
+        }
+
+        .msg-author {
+            font-size: 10px;
+            font-weight: 800;
+            color: #38bdf8;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* AI Markdown and Code Block */
+        .code-block-wrapper {
+            margin: 8px 0;
+            background: #090c13;
+            border: 1px solid #232d44;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        .code-block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #101624;
+            padding: 4px 10px;
+            border-bottom: 1px solid #1e263a;
+        }
+
+        .code-lang-tag {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .code-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .code-btn {
+            background: #1e283d;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .code-btn:hover { background: #2d3b59; }
+
+        .insert-btn {
+            background: #059669;
+            border-color: #10b981;
+            color: #fff;
+        }
+        .insert-btn:hover { background: #10b981; }
+
+        .code-content {
+            margin: 0;
+            padding: 9px 12px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 11px;
+            line-height: 1.45;
+            color: #a5f3fc;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .inline-code {
+            background: #1f293d;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #38bdf8;
+        }
+
+        /* Chat Input Box */
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .chat-textarea {
+            flex: 1;
+            background: #0e1320;
+            border: 1px solid #232c40;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: inherit;
+            outline: none;
+            resize: none;
+            min-height: 38px;
+            max-height: 110px;
+            line-height: 1.4;
+        }
+
+        .chat-options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding: 0 4px;
+        }
+
+        .btn-chat-send {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: #fff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+            transition: all 0.15s;
+        }
+        .btn-chat-send:hover { filter: brightness(1.1); }
+        .btn-chat-send:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+
+        /* Responsive Layouts */
+        @media (max-width: 960px) {
+            .workspace-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .pane-studio {
+                width: 100%;
+                min-width: 0;
+                height: 600px;
+            }
+            .pane-calc.hidden-pane, .pane-studio.hidden-pane {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="ti-body">
-        <div class="ti-header">
-            <span class="ti-logo">TEXAS INSTRUMENTS</span>
-            <span class="ti-model">TI-84 Plus CE</span>
+    <!-- Top Workspace Header -->
+    <header class="studio-topbar">
+        <div class="brand-cluster">
+            <span class="badge-chip">TEXAS INSTRUMENTS</span>
+            <span class="studio-title">TI-84 Plus CE Studio</span>
         </div>
-
-        <div class="screen-bezel">
-            <canvas id="screen" width="320" height="240"></canvas>
+        <div class="view-switchers">
+            <button class="v-tab-btn active" data-view="split">Split</button>
+            <button class="v-tab-btn" data-view="calc">Calc</button>
+            <button class="v-tab-btn" data-view="studio">IDE & AI</button>
         </div>
+    </header>
 
-        <div id="status" class="status-pill">Checking storage...</div>
+    <div class="workspace-grid">
+        <!-- Pane 1: Hardware Calculator -->
+        <div id="pane-calc" class="pane-calc">
+            <div class="ti-body">
+                <div class="ti-header">
+                    <span class="ti-logo">TEXAS INSTRUMENTS</span>
+                    <span class="ti-model">TI-84 Plus CE</span>
+                </div>
 
-        <div class="keypad-matrix">
-            <!-- Row 1: Top Soft Keys -->
-            <div class="k-row">
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f1</span></div><button class="k-btn k-func" data-k="1,4">Y=</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f2</span></div><button class="k-btn k-func" data-k="1,3">WINDOW</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f3</span></div><button class="k-btn k-func" data-k="1,2">ZOOM</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f4</span></div><button class="k-btn k-func" data-k="1,1">TRACE</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f5</span></div><button class="k-btn k-func" data-k="1,0">GRAPH</button></div>
+                <div class="screen-bezel">
+                    <canvas id="screen" width="320" height="240"></canvas>
+                </div>
+
+                <div id="status" class="status-pill">Checking storage...</div>
+
+                <div class="keypad-matrix">
+                    <!-- Row 1: Function keys -->
+                    <div class="k-row">
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f1</span></div><button class="k-btn k-func" data-k="1,4">Y=</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f2</span></div><button class="k-btn k-func" data-k="1,3">WINDOW</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f3</span></div><button class="k-btn k-func" data-k="1,2">ZOOM</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f4</span></div><button class="k-btn k-func" data-k="1,1">TRACE</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">f5</span></div><button class="k-btn k-func" data-k="1,0">GRAPH</button></div>
+                    </div>
+
+                    <!-- Row 2: Nav zone + D-pad -->
+                    <div class="nav-cluster">
+                        <div class="nav-left-keys">
+                            <div class="k-row">
+                                <div class="key-unit"><div class="sub-labels"></div><button class="k-btn k-2nd" data-k="1,5">2nd</button></div>
+                                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">QUIT</span></div><button class="k-btn" data-k="1,6">MODE</button></div>
+                                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">INS</span></div><button class="k-btn" data-k="1,7">DEL</button></div>
+                            </div>
+                            <div class="k-row">
+                                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">A-LOCK</span></div><button class="k-btn k-alpha" data-k="2,6">ALPHA</button></div>
+                                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">TEST</span><span class="lbl-alpha">A</span></div><button class="k-btn" data-k="2,5">MATH</button></div>
+                                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">ANGLE</span><span class="lbl-alpha">B</span></div><button class="k-btn" data-k="3,6">APPS</button></div>
+                            </div>
+                        </div>
+
+                        <!-- D-Pad -->
+                        <div class="dpad-container">
+                            <div class="dpad">
+                                <button class="dpad-btn dpad-up" data-k="7,3">▲</button>
+                                <button class="dpad-btn dpad-down" data-k="7,0">▼</button>
+                                <button class="dpad-btn dpad-left" data-k="7,1">◄</button>
+                                <button class="dpad-btn dpad-right" data-k="7,2">►</button>
+                                <div class="dpad-center"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="k-row">
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">LINK</span></div><button class="k-btn" data-k="3,7">X,T,θ,n</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">DRAW</span><span class="lbl-alpha">C</span></div><button class="k-btn" data-k="4,6">PRGM</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">DISTR</span></div><button class="k-btn" data-k="5,6">VARS</button></div>
+                        <div class="key-unit"><div class="sub-labels"></div><button class="k-btn" data-k="6,6">CLEAR</button></div>
+                    </div>
+
+                    <!-- Row 4 -->
+                    <div class="k-row">
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">MATRIX</span><span class="lbl-alpha">D</span></div><button class="k-btn" data-k="2,4">x⁻¹</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">SIN⁻¹</span><span class="lbl-alpha">E</span></div><button class="k-btn" data-k="3,5">SIN</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">COS⁻¹</span><span class="lbl-alpha">F</span></div><button class="k-btn" data-k="4,5">COS</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">TAN⁻¹</span><span class="lbl-alpha">G</span></div><button class="k-btn" data-k="5,5">TAN</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">π</span><span class="lbl-alpha">H</span></div><button class="k-btn" data-k="6,5">^</button></div>
+                    </div>
+
+                    <!-- Row 5 -->
+                    <div class="k-row">
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">√</span><span class="lbl-alpha">I</span></div><button class="k-btn" data-k="2,3">x²</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">u</span><span class="lbl-alpha">O</span></div><button class="k-btn k-num" data-k="3,3">7</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">v</span><span class="lbl-alpha">P</span></div><button class="k-btn k-num" data-k="4,3">8</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">w</span><span class="lbl-alpha">Q</span></div><button class="k-btn k-num" data-k="5,3">9</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">e</span></div><button class="k-btn" data-k="6,4">÷</button></div>
+                    </div>
+
+                    <!-- Row 6 -->
+                    <div class="k-row">
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">EE</span><span class="lbl-alpha">J</span></div><button class="k-btn" data-k="3,4">,</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L4</span><span class="lbl-alpha">T</span></div><button class="k-btn k-num" data-k="3,2">4</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L5</span><span class="lbl-alpha">U</span></div><button class="k-btn k-num" data-k="4,2">5</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L6</span><span class="lbl-alpha">V</span></div><button class="k-btn k-num" data-k="5,2">6</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">[</span></div><button class="k-btn" data-k="6,3">×</button></div>
+                    </div>
+
+                    <!-- Row 7 -->
+                    <div class="k-row">
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">{</span><span class="lbl-alpha">K</span></div><button class="k-btn" data-k="4,4">(</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L1</span><span class="lbl-alpha">Y</span></div><button class="k-btn k-num" data-k="3,1">1</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L2</span><span class="lbl-alpha">Z</span></div><button class="k-btn k-num" data-k="4,1">2</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L3</span><span class="lbl-alpha">θ</span></div><button class="k-btn k-num" data-k="5,1">3</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">]</span></div><button class="k-btn" data-k="6,2">−</button></div>
+                    </div>
+
+                    <!-- Row 8 -->
+                    <div class="k-row">
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">}</span><span class="lbl-alpha">L</span></div><button class="k-btn" data-k="5,4">)</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">CATALOG</span></div><button class="k-btn k-num" data-k="3,0">0</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">i</span></div><button class="k-btn k-num" data-k="4,0">.</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">ANS</span><span class="lbl-alpha">?</span></div><button class="k-btn k-num" data-k="5,0">( - )</button></div>
+                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">MEM</span><span class="lbl-alpha">"</span></div><button class="k-btn" data-k="6,1">+</button></div>
+                    </div>
+
+                    <!-- Row 9 -->
+                    <div class="k-row">
+                        <div class="key-unit" style="flex:4;"><div class="sub-labels"><span class="lbl-2nd">ENTRY</span></div><button class="k-btn k-enter" data-k="6,0">ENTER</button></div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Nav Zone: 2nd, Mode, Del, Alpha + Circular D-PAD -->
-            <div class="nav-cluster">
-                <div class="nav-left-keys">
-                    <div class="k-row">
-                        <div class="key-unit"><div class="sub-labels"></div><button class="k-btn k-2nd" data-k="1,5">2nd</button></div>
-                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">QUIT</span></div><button class="k-btn" data-k="1,6">MODE</button></div>
-                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">INS</span></div><button class="k-btn" data-k="1,7">DEL</button></div>
+            <!-- Footer Link Tools -->
+            <div class="footer-tools">
+                <label class="tool-link" for="file-upload">Send File (.8xp)</label>
+                <input type="file" id="file-upload" accept=".8xp,.8xv,.8xg,.8ca,.8cg">
+
+                <label class="tool-link" for="rom-upload">Re-upload ROM</label>
+                <input type="file" id="rom-upload" accept=".rom,.bin">
+
+                <button class="tool-link" id="clear-storage" style="color:#f87171;">Clear ROM Cache</button>
+            </div>
+        </div>
+
+        <!-- Pane 2: Studio Hub (IDE & AI Assistant) -->
+        <div id="pane-studio" class="pane-studio">
+            <nav class="studio-nav">
+                <button class="nav-tab active" data-tab="ide">💻 TI-BASIC IDE</button>
+                <button class="nav-tab" data-tab="ai">🤖 Gemini AI Assistant</button>
+            </nav>
+
+            <!-- TAB 1: Built-in IDE -->
+            <div id="tab-ide" class="tab-content active">
+                <div class="ide-header-row">
+                    <div class="ide-input-group">
+                        <span class="ide-label">PRGM:</span>
+                        <input type="text" id="ide-prgm-name" class="ide-input" value="HELLO" maxlength="8" placeholder="NAME">
                     </div>
-                    <div class="k-row">
-                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">A-LOCK</span></div><button class="k-btn k-alpha" data-k="2,6">ALPHA</button></div>
-                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">TEST</span><span class="lbl-alpha">A</span></div><button class="k-btn" data-k="2,5">MATH</button></div>
-                        <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">ANGLE</span><span class="lbl-alpha">B</span></div><button class="k-btn" data-k="3,6">APPS</button></div>
+                    <div class="ide-input-group">
+                        <span class="ide-label">Templates:</span>
+                        <select id="ide-template-select" class="ide-select">
+                            <option value="custom">Load Template...</option>
+                            <option value="hello">Hello World & Keypress</option>
+                            <option value="guess">Guess My Number (Game)</option>
+                            <option value="quadratic">Quadratic Formula Solver</option>
+                            <option value="graphics">Circles & Coordinate Lines</option>
+                        </select>
+                        <button class="key-action-btn" id="btn-ide-clear">Clear</button>
                     </div>
                 </div>
 
-                <!-- Circular D-Pad -->
-                <div class="dpad-container">
-                    <div class="dpad">
-                        <button class="dpad-btn dpad-up" data-k="7,3">▲</button>
-                        <button class="dpad-btn dpad-down" data-k="7,0">▼</button>
-                        <button class="dpad-btn dpad-left" data-k="7,1">◄</button>
-                        <button class="dpad-btn dpad-right" data-k="7,2">►</button>
-                        <div class="dpad-center"></div>
+                <!-- Token Insert Shelf -->
+                <div class="token-shelf" title="Click to insert token at cursor">
+                    <button class="token-chip" data-insert='Disp "'>Disp</button>
+                    <button class="token-chip" data-insert='Input "PROMPT:",'>Input</button>
+                    <button class="token-chip" data-insert="Prompt ">Prompt</button>
+                    <button class="token-chip" data-insert="ClrHome&#10;">ClrHome</button>
+                    <button class="token-chip" data-insert="If ">If</button>
+                    <button class="token-chip" data-insert="Then&#10;">Then</button>
+                    <button class="token-chip" data-insert="Else&#10;">Else</button>
+                    <button class="token-chip" data-insert="While ">While</button>
+                    <button class="token-chip" data-insert="For(">For(</button>
+                    <button class="token-chip" data-insert="End&#10;">End</button>
+                    <button class="token-chip" data-insert="Lbl ">Lbl</button>
+                    <button class="token-chip" data-insert="Goto ">Goto</button>
+                    <button class="token-chip" data-insert="->">→</button>
+                    <button class="token-chip" data-insert="getKey">getKey</button>
+                    <button class="token-chip" data-insert="randInt(">randInt(</button>
+                    <button class="token-chip" data-insert="ClrDraw&#10;">ClrDraw</button>
+                    <button class="token-chip" data-insert="DispGraph&#10;">DispGraph</button>
+                    <button class="token-chip" data-insert="Pause ">Pause</button>
+                    <button class="token-chip" data-insert="Stop&#10;">Stop</button>
+                </div>
+
+                <!-- Code Editor Container -->
+                <div class="editor-container">
+                    <div id="editor-gutter" class="editor-gutter">1</div>
+                    <textarea id="ide-code" class="code-textarea" spellcheck="false" placeholder="Write TI-BASIC code here...&#10;&#10;ClrHome&#10;Disp &quot;HELLO CE!&quot;&#10;Pause"></textarea>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="ide-actions-row">
+                    <div style="display:flex; gap:8px;">
+                        <button id="btn-send-calc" class="btn-action btn-send">⚡ Send to Calculator</button>
+                        <button id="btn-download-8xp" class="btn-action btn-download">💾 Download .8xp</button>
                     </div>
+                    <button id="btn-ide-ask-ai" class="btn-action btn-ask-ai">🤖 Ask AI About Code</button>
+                </div>
+
+                <!-- Build / Status Log Console -->
+                <div id="ide-console" class="ide-console">
+                    <div class="log-info">CEmu Studio IDE ready. Type code and click "⚡ Send to Calculator".</div>
                 </div>
             </div>
 
-            <!-- Row 3: X,T,θ,n, STAT -->
-            <div class="k-row">
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">LINK</span></div><button class="k-btn" data-k="3,7">X,T,θ,n</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">DRAW</span><span class="lbl-alpha">C</span></div><button class="k-btn" data-k="4,6">PRGM</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">DISTR</span></div><button class="k-btn" data-k="5,6">VARS</button></div>
-                <div class="key-unit"><div class="sub-labels"></div><button class="k-btn" data-k="6,6">CLEAR</button></div>
-            </div>
+            <!-- TAB 2: Gemini AI Studio -->
+            <div id="tab-ai" class="tab-content">
+                <div class="ai-config-panel">
+                    <div class="ai-row">
+                        <select id="ai-model-select" class="ai-select">
+                            <option value="gemini-3.8-flash" selected>Gemini 3.8 Flash (Latest & Fast)</option>
+                            <option value="gemini-3.7-flash">Gemini 3.7 Flash (Workhorse)</option>
+                            <option value="gemini-3-pro">Gemini 3 Pro (Deep Reasoning & Math)</option>
+                            <option value="custom">Custom Model ID...</option>
+                        </select>
+                        <input type="text" id="ai-custom-model" class="ai-key-input" style="display:none;" placeholder="e.g. gemini-3-pro-preview">
+                    </div>
+                    <div class="ai-row">
+                        <input type="password" id="ai-api-key" class="ai-key-input" placeholder="Enter Google Gemini API Key">
+                        <button id="btn-toggle-key" class="key-action-btn" title="Toggle visibility">👁</button>
+                        <button id="btn-save-key" class="key-action-btn">Save Key</button>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="key-link">Get Free Key</a>
+                    </div>
+                </div>
 
-            <!-- Row 4: Math functions -->
-            <div class="k-row">
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">MATRIX</span><span class="lbl-alpha">D</span></div><button class="k-btn" data-k="2,4">x⁻¹</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">SIN⁻¹</span><span class="lbl-alpha">E</span></div><button class="k-btn" data-k="3,5">SIN</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">COS⁻¹</span><span class="lbl-alpha">F</span></div><button class="k-btn" data-k="4,5">COS</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">TAN⁻¹</span><span class="lbl-alpha">G</span></div><button class="k-btn" data-k="5,5">TAN</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">π</span><span class="lbl-alpha">H</span></div><button class="k-btn" data-k="6,5">^</button></div>
-            </div>
+                <!-- Quick Prompts Chips -->
+                <div class="quick-chips-row">
+                    <button class="ai-chip" data-prompt="Write an engaging Guess My Number game in TI-BASIC with scoring and hint indicators.">🎮 Guess Game</button>
+                    <button class="ai-chip" data-prompt="Create a robust Quadratic Equation solver in TI-BASIC that handles real and non-real discriminant roots.">📐 Quadratic Solver</button>
+                    <button class="ai-chip" data-prompt="Analyze the current IDE code for logical bugs, syntax errors, and TI-OS memory leak hazards.">🐞 Fix & Debug</button>
+                    <button class="ai-chip" data-prompt="Optimize the current IDE code for maximum execution speed and minimal byte token size on TI-84 Plus CE.">⚡ Optimize Code</button>
+                    <button class="ai-chip" data-prompt="How do I read Arrow and Enter key presses smoothly in a game loop using getKey?">🎮 getKey Guide</button>
+                </div>
 
-            <!-- Row 5: 7 8 9 ÷ -->
-            <div class="k-row">
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">√</span><span class="lbl-alpha">I</span></div><button class="k-btn" data-k="2,3">x²</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">u</span><span class="lbl-alpha">O</span></div><button class="k-btn k-num" data-k="3,3">7</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">v</span><span class="lbl-alpha">P</span></div><button class="k-btn k-num" data-k="4,3">8</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">w</span><span class="lbl-alpha">Q</span></div><button class="k-btn k-num" data-k="5,3">9</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">e</span></div><button class="k-btn" data-k="6,4">÷</button></div>
-            </div>
+                <!-- Chat History Window -->
+                <div id="ai-chat-stream" class="chat-stream">
+                    <div class="msg-bubble msg-ai">
+                        <span class="msg-author">Gemini AI Assistant</span>
+                        Hello! I am your TI-84 Plus CE development assistant powered by Gemini. Ask me to write TI-BASIC programs, optimize existing math routines, or diagnose errors. When I generate code, click <strong>"📥 Insert into IDE"</strong> to load and run it on your virtual calculator instantly!
+                    </div>
+                </div>
 
-            <!-- Row 6: 4 5 6 × -->
-            <div class="k-row">
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">EE</span><span class="lbl-alpha">J</span></div><button class="k-btn" data-k="3,4">,</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L4</span><span class="lbl-alpha">T</span></div><button class="k-btn k-num" data-k="3,2">4</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L5</span><span class="lbl-alpha">U</span></div><button class="k-btn k-num" data-k="4,2">5</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L6</span><span class="lbl-alpha">V</span></div><button class="k-btn k-num" data-k="5,2">6</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">[</span></div><button class="k-btn" data-k="6,3">×</button></div>
-            </div>
+                <!-- Chat Input Controls -->
+                <div class="chat-options-row">
+                    <label style="cursor:pointer; display:flex; align-items:center; gap:5px;">
+                        <input type="checkbox" id="ai-attach-code" checked>
+                        <span>Attach active IDE code to prompt</span>
+                    </label>
+                    <button id="btn-clear-chat" class="key-action-btn" style="padding:2px 7px;">Clear Chat</button>
+                </div>
 
-            <!-- Row 7: 1 2 3 − -->
-            <div class="k-row">
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">{</span><span class="lbl-alpha">K</span></div><button class="k-btn" data-k="4,4">(</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L1</span><span class="lbl-alpha">Y</span></div><button class="k-btn k-num" data-k="3,1">1</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L2</span><span class="lbl-alpha">Z</span></div><button class="k-btn k-num" data-k="4,1">2</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">L3</span><span class="lbl-alpha">θ</span></div><button class="k-btn k-num" data-k="5,1">3</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">]</span></div><button class="k-btn" data-k="6,2">−</button></div>
-            </div>
-
-            <!-- Row 8: 0 . (-) + -->
-            <div class="k-row">
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">}</span><span class="lbl-alpha">L</span></div><button class="k-btn" data-k="5,4">)</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">CATALOG</span></div><button class="k-btn k-num" data-k="3,0">0</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">i</span></div><button class="k-btn k-num" data-k="4,0">.</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">ANS</span><span class="lbl-alpha">?</span></div><button class="k-btn k-num" data-k="5,0">( - )</button></div>
-                <div class="key-unit"><div class="sub-labels"><span class="lbl-2nd">MEM</span><span class="lbl-alpha">"</span></div><button class="k-btn" data-k="6,1">+</button></div>
-            </div>
-
-            <!-- Row 9: Enter -->
-            <div class="k-row">
-                <div class="key-unit" style="flex:4;"><div class="sub-labels"><span class="lbl-2nd">ENTRY</span></div><button class="k-btn k-enter" data-k="6,0">ENTER</button></div>
+                <div class="chat-input-row">
+                    <textarea id="ai-chat-input" class="chat-textarea" placeholder="Ask Gemini about TI-BASIC, games, or math routines... (Enter to send)"></textarea>
+                    <button id="btn-ai-send" class="btn-chat-send">Send</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Storage & Link Port Tools -->
-    <div class="footer-tools">
-        <label class="tool-link" for="file-upload">Send Program (.8xp)</label>
-        <input type="file" id="file-upload" accept=".8xp,.8xv,.8xg,.8ca,.8cg">
-
-        <label class="tool-link" for="rom-upload">Re-upload ROM</label>
-        <input type="file" id="rom-upload" accept=".rom,.bin">
-
-        <button class="tool-link" id="clear-storage" style="color:#f87171;">Clear ROM Cache</button>
-    </div>
-
+    <!-- CEmu Web & Studio Logic -->
     <script>
-        // IndexedDB ROM Storage
+        // ==========================================
+        // 1. IndexedDB ROM Storage & CEmu State
+        // ==========================================
         const DB_NAME = "CEmuWebDB";
         const STORE_NAME = "ROMStore";
 
@@ -442,7 +1184,6 @@
             location.reload();
         }
 
-        // CEmu Native Callbacks
         var emul_is_inited = false;
         var emul_is_paused = false;
 
@@ -477,29 +1218,33 @@
         function enableGUI() {
             document.getElementById('status').innerText = "Emulation Running";
             document.getElementById('status').style.color = "#4ade80";
+            logIDE("Calculator running. Link port active.", "success");
         }
 
         function disableGUI() {
             document.getElementById('status').innerText = "Emulation Halted";
             document.getElementById('status').style.color = "#f87171";
+            logIDE("Calculator emulation halted.", "warn");
         }
 
         window.transferProgressCallback = function(done, total) {
             const percent = Math.round((done / total) * 100);
             document.getElementById('status').innerText = `Sending file: ${percent}%`;
+            logIDE(`Transferring file: ${percent}%`, "info");
             if (done >= total) {
                 setTimeout(() => {
                     document.getElementById('status').innerText = "File transferred!";
-                }, 1200);
+                    logIDE("File successfully transferred to TI-84 Plus CE!", "success");
+                }, 1000);
             }
         };
 
         window.transferErrorCallback = function() {
             document.getElementById('status').innerText = "Transfer error.";
             document.getElementById('status').style.color = "#f87171";
+            logIDE("Error transferring file through virtual link port.", "error");
         };
 
-        // Keypad Inputs
         function pressKey(r, c) { if (cemu_key) cemu_key(r, c, 1); }
         function releaseKey(r, c) { if (cemu_key) cemu_key(r, c, 0); }
 
@@ -519,7 +1264,6 @@
             });
         }
 
-        // Hardware keyboard mapping
         const pcKeyMap = {
             'ArrowDown':  [7, 0],
             'ArrowLeft':  [7, 1],
@@ -551,11 +1295,28 @@
             'Delete':     [1, 7]
         };
 
+        // Guard keyboard shortcuts so typing in IDE or AI Chat does not trigger calc keys!
         window.addEventListener('keydown', (e) => {
-            if (pcKeyMap[e.key]) pressKey(pcKeyMap[e.key][0], pcKeyMap[e.key][1]);
+            const active = document.activeElement;
+            if (active && (['INPUT', 'TEXTAREA'].includes(active.tagName) || active.isContentEditable)) {
+                return;
+            }
+            if (pcKeyMap[e.key]) {
+                pressKey(pcKeyMap[e.key][0], pcKeyMap[e.key][1]);
+                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    e.preventDefault();
+                }
+            }
         });
+
         window.addEventListener('keyup', (e) => {
-            if (pcKeyMap[e.key]) releaseKey(pcKeyMap[e.key][0], pcKeyMap[e.key][1]);
+            const active = document.activeElement;
+            if (active && (['INPUT', 'TEXTAREA'].includes(active.tagName) || active.isContentEditable)) {
+                return;
+            }
+            if (pcKeyMap[e.key]) {
+                releaseKey(pcKeyMap[e.key][0], pcKeyMap[e.key][1]);
+            }
         });
 
         function startEmulatorWithROM(romData) {
@@ -576,6 +1337,7 @@
                 const path = "/" + file.name;
                 Module.FS.writeFile(path, bytes);
                 document.getElementById('status').innerText = `Sending ${file.name}...`;
+                logIDE(`Sending file ${file.name} to calculator...`, "info");
                 cemu_send_file(path);
             };
             reader.readAsArrayBuffer(file);
@@ -598,6 +1360,7 @@
             noInitialRun: true,
             onRuntimeInitialized: async function() {
                 setupTouchKeypad();
+                initLCD();
 
                 const cachedROM = await loadRomFromDB();
                 if (cachedROM) {
@@ -605,9 +1368,642 @@
                     startEmulatorWithROM(cachedROM);
                 } else {
                     document.getElementById('status').innerText = "Ready. Please upload CE.rom";
+                    logIDE("Please upload your TI-84 Plus CE ROM image (.rom or .bin) to start.", "warn");
                 }
             }
         };
+
+        // ==========================================
+        // 2. View Switcher & Workspace Tabs
+        // ==========================================
+        const viewButtons = document.querySelectorAll('.v-tab-btn');
+        const paneCalc = document.getElementById('pane-calc');
+        const paneStudio = document.getElementById('pane-studio');
+
+        viewButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                viewButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const v = btn.getAttribute('data-view');
+                if (v === 'calc') {
+                    paneCalc.classList.remove('hidden-pane');
+                    paneStudio.classList.add('hidden-pane');
+                } else if (v === 'studio') {
+                    paneCalc.classList.add('hidden-pane');
+                    paneStudio.classList.remove('hidden-pane');
+                } else {
+                    paneCalc.classList.remove('hidden-pane');
+                    paneStudio.classList.remove('hidden-pane');
+                }
+            });
+        });
+
+        const navTabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        function switchStudioTab(tabId) {
+            navTabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-tab') === tabId));
+            tabContents.forEach(c => c.classList.toggle('active', c.id === 'tab-' + tabId));
+        }
+
+        navTabs.forEach(tab => {
+            tab.addEventListener('click', () => switchStudioTab(tab.getAttribute('data-tab')));
+        });
+
+        // ==========================================
+        // 3. TI-BASIC Tokenizer & .8XP Binary Compiler
+        // ==========================================
+        const TI_TOKENS = [
+            { s: "randInt(", b: [0xBB, 0x0A] },
+            { s: "randBin(", b: [0xBB, 0x0B] },
+            { s: "sub(", b: [0xBB, 0x0C] },
+            { s: "stdDev(", b: [0xBB, 0x0D] },
+            { s: "variance(", b: [0xBB, 0x0E] },
+            { s: "inString(", b: [0xBB, 0x0F] },
+            { s: "DispGraph", b: [0xDF] },
+            { s: "DispTable", b: [0xE5] },
+            { s: "ClrTable", b: [0xE2] },
+            { s: "ClrDraw", b: [0x85] },
+            { s: "ClrHome", b: [0xE1] },
+            { s: "Output(", b: [0xE0] },
+            { s: "ZStandard", b: [0xBB, 0x86] },
+            { s: "AxesOff", b: [0x7E, 0x09] },
+            { s: "AxesOn", b: [0x7E, 0x08] },
+            { s: "Vertical ", b: [0xBB, 0x2B] },
+            { s: "Horizontal ", b: [0xBB, 0x2C] },
+            { s: "Pt-Change(", b: [0xBB, 0x31] },
+            { s: "Pt-Off(", b: [0xBB, 0x30] },
+            { s: "Pt-On(", b: [0xBB, 0x2F] },
+            { s: "Pxl-Change(", b: [0xBB, 0x34] },
+            { s: "Pxl-Off(", b: [0xBB, 0x33] },
+            { s: "Pxl-On(", b: [0xBB, 0x32] },
+            { s: "Pxl-Test(", b: [0xBB, 0x35] },
+            { s: "Circle(", b: [0xBB, 0x2E] },
+            { s: "Line(", b: [0xBB, 0x2A] },
+            { s: "SortA(", b: [0xE3] },
+            { s: "SortD(", b: [0xE4] },
+            { s: "Prompt ", b: [0xDD] },
+            { s: "Prompt", b: [0xDD] },
+            { s: "Input ", b: [0xDC] },
+            { s: "Input", b: [0xDC] },
+            { s: "Disp ", b: [0xDE] },
+            { s: "Disp", b: [0xDE] },
+            { s: "Pause ", b: [0xD8] },
+            { s: "Pause", b: [0xD8] },
+            { s: "Repeat ", b: [0xD2] },
+            { s: "Repeat", b: [0xD2] },
+            { s: "Return", b: [0xD5] },
+            { s: "While ", b: [0xD1] },
+            { s: "While", b: [0xD1] },
+            { s: "Menu(", b: [0xE6] },
+            { s: "getKey", b: [0xAC] },
+            { s: "rand", b: [0xAB] },
+            { s: "For(", b: [0xD3] },
+            { s: "Then", b: [0xCF] },
+            { s: "Else", b: [0xD0] },
+            { s: "Goto ", b: [0xD7] },
+            { s: "Goto", b: [0xD7] },
+            { s: "Stop", b: [0xD9] },
+            { s: "sin(", b: [0x89] },
+            { s: "cos(", b: [0x8A] },
+            { s: "tan(", b: [0x8B] },
+            { s: "log(", b: [0x87] },
+            { s: "ln(", b: [0x86] },
+            { s: "e^(", b: [0x88] },
+            { s: "√(", b: [0x84] },
+            { s: "sqrt(", b: [0x84] },
+            { s: "int(", b: [0xB1] },
+            { s: "abs(", b: [0xB2] },
+            { s: "Lbl ", b: [0xD6] },
+            { s: "Lbl", b: [0xD6] },
+            { s: "End", b: [0xD4] },
+            { s: "IS>(", b: [0xDA] },
+            { s: "DS<(", b: [0xDB] },
+            { s: "If ", b: [0xCE] },
+            { s: "If", b: [0xCE] },
+            { s: " and ", b: [0x7E] },
+            { s: " or ", b: [0x7F] },
+            { s: " xor ", b: [0x80] },
+            { s: "not(", b: [0x69] },
+            { s: "->", b: [0x04] },
+            { s: "→", b: [0x04] },
+            { s: "!=", b: [0x6F] },
+            { s: "≠", b: [0x6F] },
+            { s: "<=", b: [0x6D] },
+            { s: "≤", b: [0x6D] },
+            { s: ">=", b: [0x6E] },
+            { s: "≥", b: [0x6E] },
+            { s: "==", b: [0x6A] },
+            { s: "=", b: [0x6A] },
+            { s: "<", b: [0x6B] },
+            { s: ">", b: [0x6C] },
+            { s: "+", b: [0x70] },
+            { s: "-", b: [0x71] },
+            { s: "*", b: [0x82] },
+            { s: "×", b: [0x82] },
+            { s: "/", b: [0x83] },
+            { s: "÷", b: [0x83] },
+            { s: "^", b: [0xF0] },
+            { s: "²", b: [0x0D] },
+            { s: "⁻¹", b: [0x0C] },
+            { s: "³", b: [0x0F] },
+            { s: "(", b: [0x10] },
+            { s: ")", b: [0x11] },
+            { s: ",", b: [0x2B] },
+            { s: '"', b: [0x2A] },
+            { s: " ", b: [0x29] },
+            { s: ".", b: [0x3A] },
+            { s: ":", b: [0x3E] },
+            { s: "?", b: [0xAF] },
+            { s: "!", b: [0x2D] },
+            { s: "'", b: [0xAE] },
+            { s: "[", b: [0x06] },
+            { s: "]", b: [0x07] },
+            { s: "{", b: [0x08] },
+            { s: "}", b: [0x09] },
+            { s: "θ", b: [0x5B] },
+            { s: "Ans", b: [0x72] }
+        ];
+
+        function tokenizeTiBasic(source) {
+            const bytes = [];
+            const lines = source.split(/\r?\n/);
+            const sortedTokens = [...TI_TOKENS].sort((a, b) => b.s.length - a.s.length);
+
+            for (let li = 0; li < lines.length; li++) {
+                let line = lines[li].trim();
+                if (line.startsWith(':')) {
+                    line = line.substring(1).trim();
+                }
+                if (!line && li < lines.length - 1) {
+                    bytes.push(0x3F);
+                    continue;
+                }
+
+                let i = 0;
+                while (i < line.length) {
+                    let matched = false;
+                    for (const tok of sortedTokens) {
+                        if (line.startsWith(tok.s, i)) {
+                            for (const b of tok.b) bytes.push(b);
+                            i += tok.s.length;
+                            matched = true;
+                            break;
+                        }
+                    }
+                    if (matched) continue;
+
+                    const char = line[i];
+                    const code = char.charCodeAt(0);
+
+                    if (char >= '0' && char <= '9') {
+                        bytes.push(code);
+                        i++;
+                    } else if (char >= 'A' && char <= 'Z') {
+                        bytes.push(code);
+                        i++;
+                    } else if (char >= 'a' && char <= 'k') {
+                        bytes.push(0xBB, 0xB0 + (code - 97));
+                        i++;
+                    } else if (char >= 'l' && char <= 'z') {
+                        bytes.push(0xBB, 0xBC + (code - 108));
+                        i++;
+                    } else if (char === ' ') {
+                        bytes.push(0x29);
+                        i++;
+                    } else {
+                        if (code >= 0x20 && code <= 0x7E) {
+                            bytes.push(code);
+                        }
+                        i++;
+                    }
+                }
+
+                if (li < lines.length - 1) {
+                    bytes.push(0x3F);
+                }
+            }
+            return new Uint8Array(bytes);
+        }
+
+        function compileTiBasicTo8xp(sourceCode, rawName) {
+            let progName = (rawName || "PROG1").toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (!progName) progName = "PROG1";
+            if (!/^[A-Z]/.test(progName)) progName = "P" + progName;
+            progName = progName.slice(0, 8);
+
+            const tokenBytes = tokenizeTiBasic(sourceCode);
+            const bodyLen = tokenBytes.length;
+            const varDataLen = bodyLen + 2;
+            const dataSectionLen = 19 + bodyLen;
+
+            const fileBuffer = new Uint8Array(55 + dataSectionLen + 2);
+            const view = new DataView(fileBuffer.buffer);
+
+            // 55-byte File Header
+            const magic = [0x2A, 0x2A, 0x54, 0x49, 0x38, 0x33, 0x46, 0x2A, 0x1A, 0x0A, 0x00];
+            magic.forEach((b, i) => fileBuffer[i] = b);
+
+            const comment = "CEmu Webport Studio Program";
+            for (let i = 0; i < 42; i++) {
+                fileBuffer[11 + i] = i < comment.length ? comment.charCodeAt(i) : 0x00;
+            }
+
+            // Data section size
+            view.setUint16(53, dataSectionLen, true);
+
+            // Data Section (Offset 55)
+            let ptr = 55;
+            view.setUint16(ptr, 0x000D, true); ptr += 2;
+            view.setUint16(ptr, varDataLen, true); ptr += 2;
+            fileBuffer[ptr++] = 0x06; // 0x06 = Unprotected program
+
+            for (let i = 0; i < 8; i++) {
+                fileBuffer[ptr++] = i < progName.length ? progName.charCodeAt(i) : 0x00;
+            }
+            fileBuffer[ptr++] = 0x00; // version
+            fileBuffer[ptr++] = 0x00; // unarchived RAM
+
+            view.setUint16(ptr, varDataLen, true); ptr += 2;
+            view.setUint16(ptr, bodyLen, true); ptr += 2;
+
+            fileBuffer.set(tokenBytes, ptr);
+            ptr += bodyLen;
+
+            // 2-byte Checksum
+            let checksum = 0;
+            for (let i = 55; i < ptr; i++) {
+                checksum = (checksum + fileBuffer[i]) & 0xFFFF;
+            }
+            view.setUint16(ptr, checksum, true);
+
+            return { bytes: fileBuffer, progName, bodyLen };
+        }
+
+        // ==========================================
+        // 4. Built-in IDE Controls & Console
+        // ==========================================
+        const codeTextarea = document.getElementById('ide-code');
+        const editorGutter = document.getElementById('editor-gutter');
+        const prgmNameInput = document.getElementById('ide-prgm-name');
+        const consoleEl = document.getElementById('ide-console');
+
+        function logIDE(msg, type = "info") {
+            const time = new Date().toLocaleTimeString();
+            const row = document.createElement('div');
+            row.className = `log-${type}`;
+            row.innerText = `[${time}] ${msg}`;
+            consoleEl.appendChild(row);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        function updateLineNumbers() {
+            const lines = codeTextarea.value.split('\n').length;
+            let numbers = [];
+            for (let i = 1; i <= Math.max(lines, 1); i++) numbers.push(i);
+            editorGutter.innerText = numbers.join('\n');
+            editorGutter.scrollTop = codeTextarea.scrollTop;
+        }
+
+        codeTextarea.addEventListener('input', updateLineNumbers);
+        codeTextarea.addEventListener('scroll', () => {
+            editorGutter.scrollTop = codeTextarea.scrollTop;
+        });
+
+        // Tab Key in editor
+        codeTextarea.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = codeTextarea.selectionStart;
+                const end = codeTextarea.selectionEnd;
+                codeTextarea.value = codeTextarea.value.substring(0, start) + "  " + codeTextarea.value.substring(end);
+                codeTextarea.selectionStart = codeTextarea.selectionEnd = start + 2;
+                updateLineNumbers();
+            }
+        });
+
+        // Token shelf insertion
+        document.querySelectorAll('.token-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const token = btn.getAttribute('data-insert');
+                const start = codeTextarea.selectionStart;
+                const end = codeTextarea.selectionEnd;
+                codeTextarea.value = codeTextarea.value.substring(0, start) + token + codeTextarea.value.substring(end);
+                codeTextarea.selectionStart = codeTextarea.selectionEnd = start + token.length;
+                codeTextarea.focus();
+                updateLineNumbers();
+            });
+        });
+
+        // Templates
+        const TEMPLATES = {
+            hello: `ClrHome\nDisp "HELLO WORLD!"\nDisp "PRESS ANY KEY..."\nRepeat Ans\ngetKey\nEnd\nClrHome\nDisp "BYE!"`,
+            guess: `ClrHome\nrandInt(1,100)->N\n0->C\nDisp "GUESS 1 TO 100"\nRepeat G=N\nPrompt G\nC+1->C\nIf G<N\nDisp "TOO LOW!"\nIf G>N\nDisp "TOO HIGH!"\nEnd\nClrHome\nDisp "YOU WON!"\nDisp "TRIES:",C`,
+            quadratic: `ClrHome\nDisp "AX^2+BX+C=0"\nPrompt A,B,C\nB^2-4AC->D\nIf D<0\nThen\nDisp "NO REAL ROOTS"\nDisp "DISCRIM:",D\nElse\n(-B+√(D))/(2A)->R\n(-B-√(D))/(2A)->S\nDisp "ROOT 1:",R\nDisp "ROOT 2:",S\nEnd`,
+            graphics: `ClrHome\nClrDraw\nZStandard\nAxesOff\nCircle(0,0,6)\nCircle(0,0,4)\nCircle(0,0,2)\nLine(-10,0,10,0)\nLine(0,-10,0,10)\nDispGraph\nPause \nAxesOn\nClrHome`
+        };
+
+        document.getElementById('ide-template-select').addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (TEMPLATES[val]) {
+                codeTextarea.value = TEMPLATES[val];
+                prgmNameInput.value = val.substring(0, 8).toUpperCase();
+                updateLineNumbers();
+                logIDE(`Loaded template "${val}".`, "info");
+            }
+        });
+
+        document.getElementById('btn-ide-clear').addEventListener('click', () => {
+            codeTextarea.value = "";
+            updateLineNumbers();
+            logIDE("Editor cleared.", "info");
+        });
+
+        // Send to Calculator
+        document.getElementById('btn-send-calc').addEventListener('click', () => {
+            if (!codeTextarea.value.trim()) {
+                logIDE("Cannot send empty program.", "warn");
+                return;
+            }
+            if (!emul_is_inited || !cemu_send_file) {
+                logIDE("Emulator is not running! Upload CE.rom first.", "error");
+                return;
+            }
+            try {
+                const { bytes, progName, bodyLen } = compileTiBasicTo8xp(codeTextarea.value, prgmNameInput.value);
+                const path = "/" + progName + ".8xp";
+                Module.FS.writeFile(path, bytes);
+                logIDE(`Compiled ${progName}.8xp (${bodyLen} token bytes). Sending to TI-OS...`, "info");
+                cemu_send_file(path);
+            } catch (err) {
+                logIDE("Build / Send failed: " + err.message, "error");
+            }
+        });
+
+        // Download .8xp
+        document.getElementById('btn-download-8xp').addEventListener('click', () => {
+            if (!codeTextarea.value.trim()) {
+                logIDE("Cannot export empty program.", "warn");
+                return;
+            }
+            try {
+                const { bytes, progName } = compileTiBasicTo8xp(codeTextarea.value, prgmNameInput.value);
+                const blob = new Blob([bytes], { type: "application/octet-stream" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${progName}.8xp`;
+                a.click();
+                URL.revokeObjectURL(url);
+                logIDE(`Exported ${progName}.8xp to computer.`, "success");
+            } catch (err) {
+                logIDE("Export failed: " + err.message, "error");
+            }
+        });
+
+        document.getElementById('btn-ide-ask-ai').addEventListener('click', () => {
+            switchStudioTab('ai');
+            const chatInput = document.getElementById('ai-chat-input');
+            chatInput.value = "Please analyze this TI-BASIC program and suggest performance optimizations or bug fixes.";
+            chatInput.focus();
+        });
+
+        // ==========================================
+        // 5. Gemini AI Integration (3.8 Flash, 3.7 Flash, 3 Pro)
+        // ==========================================
+        const modelSelect = document.getElementById('ai-model-select');
+        const customModelInput = document.getElementById('ai-custom-model');
+        const apiKeyInput = document.getElementById('ai-api-key');
+        const btnToggleKey = document.getElementById('btn-toggle-key');
+        const btnSaveKey = document.getElementById('btn-save-key');
+        const chatStream = document.getElementById('ai-chat-stream');
+        const chatInput = document.getElementById('ai-chat-input');
+        const btnAiSend = document.getElementById('btn-ai-send');
+        const attachCodeCheckbox = document.getElementById('ai-attach-code');
+
+        // Restore saved key
+        const savedKey = localStorage.getItem("gemini_api_key") || "";
+        if (savedKey) apiKeyInput.value = savedKey;
+
+        btnToggleKey.addEventListener('click', () => {
+            apiKeyInput.type = apiKeyInput.type === 'password' ? 'text' : 'password';
+        });
+
+        btnSaveKey.addEventListener('click', () => {
+            localStorage.setItem("gemini_api_key", apiKeyInput.value.trim());
+            alert("Gemini API key saved to browser local storage!");
+        });
+
+        modelSelect.addEventListener('change', () => {
+            customModelInput.style.display = modelSelect.value === 'custom' ? 'block' : 'none';
+        });
+
+        function getActiveModel() {
+            if (modelSelect.value === 'custom') {
+                return customModelInput.value.trim() || 'gemini-3.8-flash';
+            }
+            return modelSelect.value;
+        }
+
+        const SYSTEM_PROMPT = `You are an expert Texas Instruments TI-84 Plus CE graphing calculator programmer and computer science tutor.
+You help users write, explain, optimize, and debug TI-BASIC programs (and eZ80 assembly/C when requested).
+Key details:
+- Screen dimensions: 320x240 pixels (window typically -10 to 10 for X/Y in ZStandard); text screen is 26 columns x 10 rows.
+- Valid tokens: ClrHome, Disp, Input, Prompt, Output(row,col,val), If, Then, Else, While, Repeat, For(var,start,end), End, Lbl, Goto, Pause, Stop, Menu(
+- Store syntax: val->VAR (e.g. 5->A)
+- Variables: A-Z, θ, Ans, Str1-Str0, [A]-[J], L1-L6
+- Rule: Warn against using Goto to jump out of loops (causes memory leaks on TI-OS).
+- Format code blocks strictly using \`\`\`tibasic so users can copy or insert them into the built-in IDE with one click.
+Keep responses concise, practical, and directly executable.`;
+
+        let chatMessagesHistory = [];
+        window._aiCodeSnippets = {};
+
+        function appendMessage(role, text) {
+            const bubble = document.createElement('div');
+            bubble.className = `msg-bubble ${role === 'user' ? 'msg-user' : 'msg-ai'}`;
+
+            if (role === 'ai') {
+                const author = document.createElement('span');
+                author.className = 'msg-author';
+                author.innerText = `Gemini (${getActiveModel()})`;
+                bubble.appendChild(author);
+
+                const body = document.createElement('div');
+                body.innerHTML = formatMarkdown(text);
+                bubble.appendChild(body);
+            } else {
+                bubble.innerText = text;
+            }
+
+            chatStream.appendChild(bubble);
+            chatStream.scrollTop = chatStream.scrollHeight;
+            return bubble;
+        }
+
+        function formatMarkdown(content) {
+            let escaped = content
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            // Code blocks
+            escaped = escaped.replace(/```([a-zA-Z0-9_\-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+                const snippetId = "code_" + Math.random().toString(36).substr(2, 8);
+                const rawCode = code
+                    .replace(/&amp;/g, '&')
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>');
+                window._aiCodeSnippets[snippetId] = rawCode;
+
+                return `<div class="code-block-wrapper">
+                    <div class="code-block-header">
+                        <span class="code-lang-tag">${lang || 'TI-BASIC'}</span>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copySnippet('${snippetId}')">📋 Copy</button>
+                            <button class="code-btn insert-btn" onclick="insertSnippetToIDE('${snippetId}')">📥 Insert into IDE</button>
+                        </div>
+                    </div>
+                    <pre class="code-content">${code.trim()}</pre>
+                </div>`;
+            });
+
+            // Inline code
+            escaped = escaped.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            // Bold
+            escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            // Italic
+            escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            // Newlines
+            escaped = escaped.replace(/\n/g, '<br>');
+
+            return escaped;
+        }
+
+        window.copySnippet = function(id) {
+            const code = window._aiCodeSnippets[id];
+            if (!code) return;
+            navigator.clipboard.writeText(code).then(() => {
+                logIDE("Snippet copied to clipboard.", "info");
+            });
+        };
+
+        window.insertSnippetToIDE = function(id) {
+            const code = window._aiCodeSnippets[id];
+            if (!code) return;
+            codeTextarea.value = code.trim();
+            updateLineNumbers();
+            switchStudioTab('ide');
+            codeTextarea.classList.add('flash-highlight');
+            setTimeout(() => codeTextarea.classList.remove('flash-highlight'), 800);
+            logIDE("Code inserted into IDE! Click '⚡ Send to Calculator' to test.", "success");
+        };
+
+        async function sendChatMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            const apiKey = apiKeyInput.value.trim() || localStorage.getItem("gemini_api_key");
+            if (!apiKey) {
+                alert("Please provide your Google Gemini API key above to use the AI Assistant.");
+                apiKeyInput.focus();
+                return;
+            }
+
+            chatInput.value = "";
+            appendMessage('user', text);
+
+            let promptPayload = text;
+            if (attachCodeCheckbox.checked && codeTextarea.value.trim()) {
+                promptPayload += `\n\n[Active IDE Program: ${prgmNameInput.value.trim()}]\n\`\`\`tibasic\n${codeTextarea.value.trim()}\n\`\`\``;
+            }
+
+            btnAiSend.disabled = true;
+            btnAiSend.innerText = "Thinking...";
+
+            const aiBubble = appendMessage('ai', "Thinking...");
+            const model = getActiveModel();
+
+            try {
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+                const contents = [];
+                for (const m of chatMessagesHistory) {
+                    contents.push({
+                        role: m.role === 'model' ? 'model' : 'user',
+                        parts: [{ text: m.text }]
+                    });
+                }
+                contents.push({
+                    role: 'user',
+                    parts: [{ text: promptPayload }]
+                });
+
+                const reqBody = {
+                    contents: contents,
+                    systemInstruction: {
+                        parts: [{ text: SYSTEM_PROMPT }]
+                    },
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 3000
+                    }
+                };
+
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reqBody)
+                });
+
+                if (!res.ok) {
+                    let errMsg = `Error ${res.status}: ${res.statusText}`;
+                    try {
+                        const errJson = await res.json();
+                        if (errJson.error?.message) errMsg = errJson.error.message;
+                    } catch (e) {}
+                    throw new Error(errMsg);
+                }
+
+                const data = await res.json();
+                const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!replyText) throw new Error("No response generated.");
+
+                chatMessagesHistory.push({ role: 'user', text: promptPayload });
+                chatMessagesHistory.push({ role: 'model', text: replyText });
+
+                aiBubble.querySelector('div').innerHTML = formatMarkdown(replyText);
+            } catch (err) {
+                aiBubble.querySelector('div').innerHTML = `<span style="color:#f87171;">⚠️ ${err.message}</span>`;
+            } finally {
+                btnAiSend.disabled = false;
+                btnAiSend.innerText = "Send";
+                chatStream.scrollTop = chatStream.scrollHeight;
+            }
+        }
+
+        btnAiSend.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+
+        document.querySelectorAll('.ai-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chatInput.value = chip.getAttribute('data-prompt');
+                sendChatMessage();
+            });
+        });
+
+        document.getElementById('btn-clear-chat').addEventListener('click', () => {
+            chatMessagesHistory = [];
+            chatStream.innerHTML = `<div class="msg-bubble msg-ai"><span class="msg-author">Gemini AI Assistant</span>Chat reset. How can I assist with your TI-84 programs?</div>`;
+        });
+
+        // Initialize gutter
+        updateLineNumbers();
     </script>
 
     <script src="cemu_web.js"></script>
